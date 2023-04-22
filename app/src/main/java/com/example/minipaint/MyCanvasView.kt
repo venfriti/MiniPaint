@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.constraintlayout.widget.ConstraintSet.Motion
 import androidx.core.content.res.ResourcesCompat
 
@@ -43,6 +44,7 @@ class MyCanvasView(context: Context) : View(context) {
     private var currentX = 0f
     private var currentY = 0f
 
+    private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
     private fun touchStart(){
         path.reset()
         path.moveTo(motionTouchEventX, motionTouchEventY)
@@ -50,7 +52,18 @@ class MyCanvasView(context: Context) : View(context) {
         currentY = motionTouchEventY
     }
 
-    private fun touchMove(){}
+    private fun touchMove(){
+        val dx = Math.abs(motionTouchEventX - currentX)
+        val dy = Math.abs(motionTouchEventY - currentY)
+        if (dx >= touchTolerance || dy >= touchTolerance) {
+            path.quadTo(currentX, currentY, (motionTouchEventX + currentX) / 2, (motionTouchEventY + currentY) / 2)
+            currentX = motionTouchEventX
+            currentY = motionTouchEventY
+
+            extraCanvas.drawPath(path, paint)
+        }
+        invalidate()
+    }
 
     private fun touchUp(){}
 
