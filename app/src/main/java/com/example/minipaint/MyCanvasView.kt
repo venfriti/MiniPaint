@@ -40,7 +40,15 @@ class MyCanvasView(context: Context) : View(context) {
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
 
-    private fun touchStart(){}
+    private var currentX = 0f
+    private var currentY = 0f
+
+    private fun touchStart(){
+        path.reset()
+        path.moveTo(motionTouchEventX, motionTouchEventY)
+        currentX = motionTouchEventX
+        currentY = motionTouchEventY
+    }
 
     private fun touchMove(){}
 
