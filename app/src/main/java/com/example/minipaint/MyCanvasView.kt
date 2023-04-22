@@ -65,7 +65,9 @@ class MyCanvasView(context: Context) : View(context) {
         invalidate()
     }
 
-    private fun touchUp(){}
+    private fun touchUp(){
+        path.reset()
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
