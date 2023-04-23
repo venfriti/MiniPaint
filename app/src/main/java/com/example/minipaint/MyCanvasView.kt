@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.constraintlayout.widget.ConstraintSet.Motion
 import androidx.core.content.res.ResourcesCompat
+import kotlin.math.abs
 
 private const val STROKE_WIDTH = 12f
 class MyCanvasView(context: Context) : View(context) {
@@ -37,6 +38,8 @@ class MyCanvasView(context: Context) : View(context) {
         strokeWidth = STROKE_WIDTH
     }
 
+    private val drawing = Path()
+    private val curPath = Path()
     private var path = Path()
 
     private var motionTouchEventX = 0f
@@ -56,8 +59,8 @@ class MyCanvasView(context: Context) : View(context) {
     }
 
     private fun touchMove(){
-        val dx = Math.abs(motionTouchEventX - currentX)
-        val dy = Math.abs(motionTouchEventY - currentY)
+        val dx = abs(motionTouchEventX - currentX)
+        val dy = abs(motionTouchEventY - currentY)
         if (dx >= touchTolerance || dy >= touchTolerance) {
             path.quadTo(currentX, currentY, (motionTouchEventX + currentX) / 2, (motionTouchEventY + currentY) / 2)
             currentX = motionTouchEventX
@@ -69,7 +72,8 @@ class MyCanvasView(context: Context) : View(context) {
     }
 
     private fun touchUp(){
-        path.reset()
+        drawing.addPath(curPath)
+        curPath.reset()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -85,7 +89,8 @@ class MyCanvasView(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+        canvas.drawPath(drawing, paint)
+        canvas.drawPath(curPath, paint)
         canvas.drawRect(frame, paint)
     }
 
